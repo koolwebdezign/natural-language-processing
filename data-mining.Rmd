@@ -1,0 +1,85 @@
+---
+title: "Data Mining - Natural Language Processing"
+author: "Jack Welch"
+date: "July 26, 2017"
+output:
+  html_document:
+    keep_md: yes
+---
+
+```{r setup, include=TRUE, message=FALSE, warning=FALSE}
+# Use cache inside R markdown file
+knitr::opts_chunk$set(cache = TRUE)
+
+# Load the tm library
+library(tm)
+
+# Load the stringi library
+library(stringi)
+```
+
+## Course Dataset - from Johns Hopkins University
+
+The dataset that is required to be used as traininig data for this capstone project is located at the following URL.  
+
+* [https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip)
+
+Since this is a rather large dataset, I have begun by doing a manual download and unzip of this data.  I obtained my dataset on the date of this report.  A copy of my data is located locally on my personal computer in the *data* sub-folder.  Due to file size limitations set by GitHub, I will not be uploading my original data files that I have downloaded from this URL.
+
+## Load the data into R
+
+```{r data, warning=FALSE}
+# Load the Twitter data
+twitter <- readLines(con <- file("./data/en_US.twitter.txt"), encoding = "UTF-8", skipNul = TRUE)
+close(con)
+
+# Load the Blog data
+blogs <- readLines(con <- file("./data/en_US.blogs.txt"), encoding = "UTF-8", skipNul = TRUE)
+close(con)
+
+# Load the News data
+news <- readLines(con <- file("./data/en_US.news.txt"), encoding = "UTF-8", skipNul = TRUE)
+close(con)
+
+```
+
+```{r file-head}
+# Head of Twitter file
+head(twitter)
+
+# Head of Blogs file
+head(blogs)
+
+# Head of News file
+head(news)
+
+```
+
+```{r file-stats}
+# Length of Twitter file
+length(twitter)
+
+# Length of Blogs file
+length(blogs)
+
+# Length of News file
+length(news)
+
+```
+
+
+```{r file_i}
+# Longest entry in Twitter file
+twitter_i <- stri_length(twitter)
+max(twitter_i)
+
+# Longest entry in Blogs file
+blogs_i <- stri_length(blogs)
+max(blogs_i)
+
+# Longest entry in News file
+news_i <- stri_length(news)
+max(news_i)
+
+```
+
