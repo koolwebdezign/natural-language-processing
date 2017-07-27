@@ -36,4 +36,18 @@ In this capstone we will be applying data science in the area of natural languag
 * [Text mining infrastructure in R](https://www.jstatsoft.org/article/view/v025i05)
 * [CRAN Task View: Natural Language Processing](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html)
 
+## Data Mining
+
+I have completed an initial data mining exercise that gives insight to the scope of the given datasets.  This data mining exercise is documented in an R markdown document, available here within this repository, and the document is identified as **data-mining.md**.
+
+One of the first things that I did was to identify that I will want to run R Studio on my machine with cache, so I configured my R markdown document accordingly.  I then used the readLines() function, as instructed within this course, to read the given text files into character vectors of length equal to the number of lines.  For human visualization, I used the head() function to output the first 6 lines of each character vector.  I then used the length() and the max() functions to learn the following:
+
+1. The Twitter data contains 2,360,148 lines and the largest entry is 140 characters (300 Mb).
+2. The Blog data contains 899,288 lines and the largest entry is 40,833 characters (250 Mb).
+3. The News data contains 77,259 lines and the largest entry is 5,760 characters (20 Mb).
+
+
+
+
+
 
