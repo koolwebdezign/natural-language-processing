@@ -12,6 +12,9 @@ library(tm)
 
 # Load the stringi library
 library(stringi)
+
+# Load the NLP library
+library(NLP)
 ```
 
 ## Course Dataset - from Johns Hopkins University
@@ -22,7 +25,11 @@ The dataset that is required to be used as traininig data for this capstone proj
 
 Since this is a rather large dataset, I have begun by doing a manual download and unzip of this data.  I obtained my dataset on the date of this report.  A copy of my data is located locally on my personal computer in the *data* sub-folder.  Due to file size limitations set by GitHub, I will not be uploading my original data files that I have downloaded from this URL.
 
-## Load the data into R
+## Getting and Cleaning the Data
+
+### Load the Data Into R
+
+Use the readlines() function to read the .txt files into memory inside R.
 
 
 ```r
@@ -38,6 +45,10 @@ close(con)
 news <- readLines(con <- file("./data/en_US.news.txt"), encoding = "UTF-8", skipNul = TRUE)
 close(con)
 ```
+
+### Simple Visualization for Human Inspection
+
+The R head() function allows us to be able to visualize the first six rows of each of the vector variables: twitter, blogs, and news.
 
 
 ```r
@@ -82,6 +93,10 @@ head(news)
 ## [6] "There was a certain amount of scoffing going around a few years ago when the NFL decided to move the draft from the weekend to prime time -- eventually splitting off the first round to a separate day."
 ```
 
+### Inspect for Length of Datasets
+
+The length() function is used to give us an idea of how many rows are included in each of these datasets.
+
 
 ```r
 # Length of Twitter file
@@ -110,6 +125,9 @@ length(news)
 ## [1] 77259
 ```
 
+### Maximum Size of Each Row
+
+Here we use the max() function in order to inspect for the maximum size of each row within the datasets.
 
 
 ```r
@@ -142,3 +160,76 @@ max(news_i)
 ## [1] 5760
 ```
 
+### Convert Datasets to Smaller Sample Datasets
+
+To improve computational performance, we are going to reduce the size of these datasets to a random sample.  We learned within the inference class of this Data Science Specialization that we can use sample data sets and accurately infer facts about the entire population.  We are now going to reduce the datasets from several millions of lines to random samples of 10,000 lines.
+
+
+```r
+set.seed(42)
+
+# Create Twitter Sample
+twitterSample <- sample(twitter, 10000)
+length(twitterSample)
+```
+
+```
+## [1] 10000
+```
+
+```r
+# Create Blogs Sample
+blogsSample <- sample(blogs, 10000)
+length(blogsSample)
+```
+
+```
+## [1] 10000
+```
+
+```r
+# Create News Sample
+newsSample <- sample(news, 10000)
+length(newsSample)
+```
+
+```
+## [1] 10000
+```
+
+### Clean The Data
+
+We were instructed within the scope of this project that we should take a few steps to clean our datasets.  It is desirable to remove excessive punctuation, whitespace, profanity, numbers and more.  
+
+
+
+
+
+
+
+
+
+
+
+
+Before we get started, we are going to join the three sample datasets into a single dataset and call this our corpus.
+
+
+```r
+# Create the corpus
+#corpus <- VCorpus(VectorSource(c(blogsSample, newsSample, twitterSample)))
+```
+
+Let's now do some simple cleaning using the **tm package** available in R.
+
+
+```r
+# Remove punctuation
+#corpus <- tm_map(corpus, removePunctuation)
+# Remove numbers
+#corpus <- tm_map(corpus, removeNumbers)
+# Remove whitespace
+#corpus <- tm_map(corpus, stripWhitespace)
+# Convert to lower case
+#corpus <- tm_map(corpus, content_transformer(tolower))
+```

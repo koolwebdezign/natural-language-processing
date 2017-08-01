@@ -131,7 +131,10 @@ knitr::opts_chunk$set(cache = TRUE)
 library(tm)
 
 # Load the stringi library
-library(stringi)</code></pre>
+library(stringi)
+
+# Load the NLP library
+library(NLP)</code></pre>
 <div id="course-dataset---from-johns-hopkins-university" class="section level2">
 <h2>Course Dataset - from Johns Hopkins University</h2>
 <p>The dataset that is required to be used as traininig data for this capstone project is located at the following URL.</p>
@@ -140,8 +143,11 @@ library(stringi)</code></pre>
 </ul>
 <p>Since this is a rather large dataset, I have begun by doing a manual download and unzip of this data. I obtained my dataset on the date of this report. A copy of my data is located locally on my personal computer in the <em>data</em> sub-folder. Due to file size limitations set by GitHub, I will not be uploading my original data files that I have downloaded from this URL.</p>
 </div>
-<div id="load-the-data-into-r" class="section level2">
-<h2>Load the data into R</h2>
+<div id="getting-and-cleaning-the-data" class="section level2">
+<h2>Getting and Cleaning the Data</h2>
+<div id="load-the-data-into-r" class="section level3">
+<h3>Load the Data Into R</h3>
+<p>Use the readlines() function to read the .txt files into memory inside R.</p>
 <pre class="r"><code># Load the Twitter data
 twitter &lt;- readLines(con &lt;- file(&quot;./data/en_US.twitter.txt&quot;), encoding = &quot;UTF-8&quot;, skipNul = TRUE)
 close(con)
@@ -153,6 +159,10 @@ close(con)
 # Load the News data
 news &lt;- readLines(con &lt;- file(&quot;./data/en_US.news.txt&quot;), encoding = &quot;UTF-8&quot;, skipNul = TRUE)
 close(con)</code></pre>
+</div>
+<div id="simple-visualization-for-human-inspection" class="section level3">
+<h3>Simple Visualization for Human Inspection</h3>
+<p>The R head() function allows us to be able to visualize the first six rows of each of the vector variables: twitter, blogs, and news.</p>
 <pre class="r"><code># Head of Twitter file
 head(twitter)</code></pre>
 <pre><code>## [1] &quot;How are you? Btw thanks for the RT. You gonna be in DC anytime soon? Love to see you. Been way, way too long.&quot;  
@@ -177,6 +187,10 @@ head(news)</code></pre>
 ## [4] &quot;The Alaimo Group of Mount Holly was up for a contract last fall to evaluate and suggest improvements to Trenton Water Works. But campaign finance records released this week show the two employees donated a total of $4,500 to the political action committee (PAC) Partners for Progress in early June. Partners for Progress reported it gave more than $10,000 in both direct and in-kind contributions to Mayor Tony Mack in the two weeks leading up to his victory in the mayoral runoff election June 15.&quot;
 ## [5] &quot;And when it's often difficult to predict a law's impact, legislators should think twice before carrying any bill. Is it absolutely necessary? Is it an issue serious enough to merit their attention? Will it definitely not make the situation worse?&quot;                                                                                                                                                                                                                                                            
 ## [6] &quot;There was a certain amount of scoffing going around a few years ago when the NFL decided to move the draft from the weekend to prime time -- eventually splitting off the first round to a separate day.&quot;</code></pre>
+</div>
+<div id="inspect-for-length-of-datasets" class="section level3">
+<h3>Inspect for Length of Datasets</h3>
+<p>The length() function is used to give us an idea of how many rows are included in each of these datasets.</p>
 <pre class="r"><code># Length of Twitter file
 length(twitter)</code></pre>
 <pre><code>## [1] 2360148</code></pre>
@@ -186,6 +200,10 @@ length(blogs)</code></pre>
 <pre class="r"><code># Length of News file
 length(news)</code></pre>
 <pre><code>## [1] 77259</code></pre>
+</div>
+<div id="maximum-size-of-each-row" class="section level3">
+<h3>Maximum Size of Each Row</h3>
+<p>Here we use the max() function in order to inspect for the maximum size of each row within the datasets.</p>
 <pre class="r"><code># Longest entry in Twitter file
 twitter_i &lt;- stri_length(twitter)
 max(twitter_i)</code></pre>
@@ -198,6 +216,41 @@ max(blogs_i)</code></pre>
 news_i &lt;- stri_length(news)
 max(news_i)</code></pre>
 <pre><code>## [1] 5760</code></pre>
+</div>
+<div id="convert-datasets-to-smaller-sample-datasets" class="section level3">
+<h3>Convert Datasets to Smaller Sample Datasets</h3>
+<p>To improve computational performance, we are going to reduce the size of these datasets to a random sample. We learned within the inference class of this Data Science Specialization that we can use sample data sets and accurately infer facts about the entire population. We are now going to reduce the datasets from several millions of lines to random samples of 10,000 lines.</p>
+<pre class="r"><code>set.seed(42)
+
+# Create Twitter Sample
+twitterSample &lt;- sample(twitter, 10000)
+length(twitterSample)</code></pre>
+<pre><code>## [1] 10000</code></pre>
+<pre class="r"><code># Create Blogs Sample
+blogsSample &lt;- sample(blogs, 10000)
+length(blogsSample)</code></pre>
+<pre><code>## [1] 10000</code></pre>
+<pre class="r"><code># Create News Sample
+newsSample &lt;- sample(news, 10000)
+length(newsSample)</code></pre>
+<pre><code>## [1] 10000</code></pre>
+</div>
+<div id="clean-the-data" class="section level3">
+<h3>Clean The Data</h3>
+<p>We were instructed within the scope of this project that we should take a few steps to clean our datasets. It is desirable to remove excessive punctuation, whitespace, profanity, numbers and more.</p>
+<p>Before we get started, we are going to join the three sample datasets into a single dataset and call this our corpus.</p>
+<pre class="r"><code># Create the corpus
+#corpus &lt;- VCorpus(VectorSource(c(blogsSample, newsSample, twitterSample)))</code></pre>
+<p>Let’s now do some simple cleaning using the <strong>tm package</strong> available in R.</p>
+<pre class="r"><code># Remove punctuation
+#corpus &lt;- tm_map(corpus, removePunctuation)
+# Remove numbers
+#corpus &lt;- tm_map(corpus, removeNumbers)
+# Remove whitespace
+#corpus &lt;- tm_map(corpus, stripWhitespace)
+# Convert to lower case
+#corpus &lt;- tm_map(corpus, content_transformer(tolower))</code></pre>
+</div>
 </div>
 
 
