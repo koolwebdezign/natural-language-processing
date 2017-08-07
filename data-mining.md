@@ -7,14 +7,14 @@ July 26, 2017
 # Use cache inside R markdown file
 knitr::opts_chunk$set(cache = TRUE)
 
-# Load the tm library
+# Load the required libraries
 library(tm)
-
-# Load the stringi library
 library(stringi)
-
-# Load the NLP library
 library(NLP)
+library(qdap)
+library(RWeka)
+library(ggplot2)
+library(wordcloud)
 ```
 
 ## Course Dataset - from Johns Hopkins University
@@ -201,35 +201,143 @@ length(newsSample)
 
 We were instructed within the scope of this project that we should take a few steps to clean our datasets.  It is desirable to remove excessive punctuation, whitespace, profanity, numbers and more.  
 
-
-
-
-
-
-
-
-
-
-
-
-Before we get started, we are going to join the three sample datasets into a single dataset and call this our corpus.
+Before we get started, we are going to join the three sample datasets into a single dataset and convert this to our corpus.
 
 
 ```r
+# Join the samples
+mySample <- c(blogsSample, newsSample, twitterSample)
+
 # Create the corpus
-#corpus <- VCorpus(VectorSource(c(blogsSample, newsSample, twitterSample)))
+corpus <- VCorpus(VectorSource(mySample))
 ```
 
-Let's now do some simple cleaning using the **tm package** available in R.
+Let's now do some cleaning using the **tm package** available in R.
 
 
 ```r
+# Remove troublesome characters using RegEx
+toSpace <- content_transformer(function(x, pattern) gsub(pattern, " ", x))
+corpus <- tm_map(corpus, toSpace, "/|@|\\|")
+corpus <- tm_map(corpus, toSpace, "[^[:graph:]]")
+
+# Remove badwords - badwords file obtained from 
+# http://www.cs.cmu.edu/~biglou/resources/bad-words.txt
+# Load bad words vector
+badwords <- readLines("badwords.txt")
+# Remove bad words
+corpus <- tm_map(corpus, removeWords, badwords)
+
 # Remove punctuation
-#corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removePunctuation)
 # Remove numbers
-#corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, removeNumbers)
 # Remove whitespace
-#corpus <- tm_map(corpus, stripWhitespace)
+corpus <- tm_map(corpus, stripWhitespace)
+# Remove stopwords
+corpus <- tm_map(corpus, removeWords, stopwords("english"))
 # Convert to lower case
-#corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, content_transformer(tolower))
 ```
+
+
+## Data Exploration
+
+The data has been cleaned and resides in a corpus which now needs to be transformed into a  document term matrix so that we can apply other tools. I drew upon the work of [Chiara Mondino]{http://54.225.166.221/ChiaraMo/CapstoneMilestone1} for the preparation of my data exploration techniques.  I really liked the sorted visualization demonstrating the most popular words and word combinations.
+
+### Document Term Matrix
+
+
+```r
+# Create DocumentTermMatrix
+dtm <- DocumentTermMatrix(corpus)
+# Output the most frequest terms 
+findFreqTerms(dtm, lowfreq = 500)
+```
+
+```
+##  [1] "also"      "always"    "and"       "another"   "around"   
+##  [6] "back"      "best"      "better"    "but"       "can"      
+## [11] "city"      "come"      "day"       "dont"      "even"     
+## [16] "every"     "feel"      "first"     "game"      "get"      
+## [21] "going"     "good"      "got"       "great"     "home"     
+## [26] "its"       "just"      "know"      "last"      "life"     
+## [31] "like"      "little"    "long"      "look"      "love"     
+## [36] "made"      "make"      "many"      "may"       "much"     
+## [41] "need"      "never"     "new"       "next"      "night"    
+## [46] "now"       "one"       "people"    "really"    "right"    
+## [51] "said"      "say"       "school"    "see"       "she"      
+## [56] "since"     "something" "state"     "still"     "take"     
+## [61] "thats"     "the"       "they"      "thing"     "things"   
+## [66] "think"     "this"      "three"     "time"      "today"    
+## [71] "two"       "use"       "want"      "way"       "week"     
+## [76] "well"      "what"      "will"      "work"      "world"    
+## [81] "year"      "years"     "you"
+```
+
+### NGram Analysis
+
+
+
+```r
+#Prepare data frame from corpus for NGram Tokenization
+df <- data.frame(text=unlist(sapply(corpus, `[`, "content")), stringsAsFactors=F)
+```
+
+
+
+```r
+# Plot most frequent words (uni-gram)
+uniGram <- NGramTokenizer(df, Weka_control(min = 1, max = 1))
+# Convert into data frame
+one <- data.frame(table(uniGram))
+onesorted <- one[order(one$Freq,decreasing = TRUE),]
+one20 <- onesorted[1:20,]
+colnames(one20) <- c("Word","Frequency")
+
+ggplot(one20, aes(x = reorder(Word, -Frequency), y = Frequency)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + geom_text(aes(label=Frequency), size=3, vjust=-0.2)
+```
+
+![](data-mining_files/figure-html/unigram-1.png)<!-- -->
+
+
+```r
+# Plot most frequent couple of words (bi-grams)
+biGram <- NGramTokenizer(df, Weka_control(min = 2, max = 2, delimiters = " \\r\\n\\t.,;:\"()?!"))
+# Convert into data frame
+two <- data.frame(table(biGram))
+twosorted <- two[order(two$Freq,decreasing = TRUE),]
+two20 <- twosorted[1:20,]
+colnames(two20) <- c("Word","Frequency")
+
+ggplot(two20, aes(x = reorder(Word, -Frequency), y = Frequency)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + geom_text(aes(label=Frequency), size=3, vjust=-0.2)
+```
+
+![](data-mining_files/figure-html/bigram-1.png)<!-- -->
+
+
+```r
+# Plot most frequent sets of three words (tri-grams)
+triGram <- NGramTokenizer(df, Weka_control(min = 3, max = 3, delimiters = " \\r\\n\\t.,;:\"()?!"))
+tri <- data.frame(table(triGram))
+trisorted <- tri[order(tri$Freq,decreasing = TRUE),]
+tri20 <- trisorted[1:20,]
+colnames(tri20) <- c("Word","Frequency")
+
+ggplot(tri20, aes(x = reorder(Word, -Frequency), y = Frequency)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + geom_text(aes(label=Frequency), size=3, vjust=-0.2)
+```
+
+![](data-mining_files/figure-html/trigram-1.png)<!-- -->
+
+
+```r
+wordcloud(tri20$Word, tri20$Freq, max.words=60)
+```
+
+![](data-mining_files/figure-html/wordcloud-1.png)<!-- -->
+
+## Conclusion & Shiny App Plan
+
+I have inspected here with this initial data exploration exercise that this approach to cleaning my data has removed punctuation from common compound words within the English language like *don't* and *she's*.  What has occurred is the appearance that there are frequently occuring words 's' and 't'.  This will have to be fixed as I move on with this project.  For now, I want this outcome to be documented within this initial report.
+
+It is my intention, moving forward, to produce a Shiny App in accordance with the course objectives.  This Shiny App will be a dynamic web page which will accept user input of a word, or a series of words, and provide a prediction of the next word in order to minimize typing by the user. This has become a common user experience with typing on cell phones and it is our intention to try to mimic that experience with the n-gram predictions shown above.
