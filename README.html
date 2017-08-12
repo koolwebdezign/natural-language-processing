@@ -124,7 +124,7 @@ $(document).ready(function () {
 <div id="introduction-to-natural-language-processing" class="section level2">
 <h2>Introduction to Natural Language Processing</h2>
 <p>Around the world, people are spending an increasing amount of time on their mobile devices for email, social networking, banking and a whole range of other activities. But typing on mobile devices can be a serious pain. SwiftKey, our corporate partner in this capstone, builds a smart keyboard that makes it easier for people to type on their mobile devices. One cornerstone of their smart keyboard is predictive text models. When someone types:</p>
-<p>I went to the</p>
+<p><em>I went to the</em></p>
 <p>the keyboard presents three options for what the next word might be. For example, the three words might be gym, store, restaurant. In this capstone you will work on understanding and building predictive text models like those used by SwiftKey.</p>
 <p>This course will start with the basics, analyzing a large corpus of text documents to discover the structure in the data and how words are put together. It will cover cleaning and analyzing text data, then building and sampling from a predictive text model. Finally, you will use the knowledge you gained in data products to build a predictive text product you can show off to your family, friends, and potential employers.</p>
 <p>You will use all of the skills you have learned during the Data Science Specialization in this course, but you’ll notice that we are tackling a brand new application: analysis of text data and natural language processing. This choice is on purpose. As a practicing data scientist you will be frequently confronted with new data types and problems. A big part of the fun and challenge of being a data scientist is figuring out how to work with these new data types to build data products people love. The capstone will be evaluated based on the following assessments:</p>
@@ -149,7 +149,24 @@ $(document).ready(function () {
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Natural_language_processing">Natural language processing Wikipedia page</a></li>
 <li><a href="https://www.jstatsoft.org/article/view/v025i05">Text mining infrastructure in R</a></li>
+<li><a href="https://cran.r-project.org/web/views/NaturalLanguageProcessing.html">CRAN Task View: Natural Language Processing</a></li>
 </ul>
+</div>
+<div id="data-mining" class="section level2">
+<h2>Data Mining</h2>
+<p>I have completed an initial data mining exercise that gives insight to the scope of the given datasets. This data mining exercise is documented in an R markdown document, available here within this repository, and the document is identified as <strong>data-mining.md</strong>.</p>
+<p>One of the first things that I did was to identify that I will want to run R Studio on my machine with cache, so I configured my R markdown document accordingly. I then used the readLines() function, as instructed within this course, to read the given text files into character vectors of length equal to the number of lines. For human visualization, I used the head() function to output the first 6 lines of each character vector. I then used the length() and the max() functions to learn the following:</p>
+<ol style="list-style-type: decimal">
+<li>The Twitter data contains 2,360,148 lines and the largest entry is 140 characters (300 Mb).</li>
+<li>The Blog data contains 899,288 lines and the largest entry is 40,833 characters (250 Mb).</li>
+<li>The News data contains 77,259 lines and the largest entry is 5,760 characters (20 Mb).</li>
+</ol>
+<p>With some other general data exploration techniques, I got familiar with the datasets. For the purposes of this initial exercise, I believed it was adequate to draw a random sample from each of these large files so that I could simply infer some general characteristics about the datasets as a whole.</p>
+<p>As instructed per this exercise, I used the <strong>tm package</strong> (Text Mining) to create a Corpus, and I then used some <strong>tm_map</strong> methods to conduct some cleaning exercises on this data. I took some steps to remove non-graphical characters, profanity, punctuation, numbers, and whitespace. I then drew on some work from Chiara Mondino for the preparation of my data exploration techniques. I found that the sorted visualization of the most popular words and word combinations to be very intuitive even to a non-technical reviewer of this work.</p>
+<p>In my conclusions, I observed that the general removal of all punctuation did not produce acceptable results. There are many common words within the english language which are presented in the form of a conjunction with the apostrophe. I will find it very important with future stages of this project that this anomoly is corrected.</p>
+</div>
+<div id="prediction-model" class="section level2">
+<h2>Prediction Model</h2>
 </div>
 </div>
 

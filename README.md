@@ -46,6 +46,14 @@ One of the first things that I did was to identify that I will want to run R Stu
 2. The Blog data contains 899,288 lines and the largest entry is 40,833 characters (250 Mb).
 3. The News data contains 77,259 lines and the largest entry is 5,760 characters (20 Mb).
 
+With some other general data exploration techniques, I got familiar with the datasets.  For the purposes of this initial exercise, I believed it was adequate to draw a random sample from each of these large files so that I could simply infer some general characteristics about the datasets as a whole.
+
+As instructed per this exercise, I used the **tm package** (Text Mining) to create a Corpus, and I then used some **tm_map** methods to conduct some cleaning exercises on this data.  I took some steps to remove non-graphical characters, profanity, punctuation, numbers, and whitespace.  I then drew on some work from Chiara Mondino for the preparation of my data exploration techniques.  I found that the sorted visualization of the most popular words and word combinations to be very intuitive even to a non-technical reviewer of this work.
+
+In my conclusions, I observed that the general removal of all punctuation did not produce acceptable results.  There are many common words within the english language which are presented in the form of a conjunction with the apostrophe.  I will find it very important with future stages of this project that this anomoly is corrected.
+
+## Prediction Model
+
 
 
 
